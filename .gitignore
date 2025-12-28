@@ -1,0 +1,6 @@
+chroma_db/
+*.bin
+*.sqlite3
+*.npy
+__pycache__/
+.env
