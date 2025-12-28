@@ -58,7 +58,7 @@ def time_to_minutes(time_str: str) -> int:
     return 9999
 
 # ---------------------------
-# Scoring (🔥 learned weights applied)
+# Scoring  
 # ---------------------------
 def score_doc(doc, user_ings: List[str], style_hint: str) -> Tuple[float, Dict]:
     md = doc.metadata or {}
