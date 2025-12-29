@@ -58,7 +58,7 @@ def time_to_minutes(time_str: str) -> int:
     return 9999
 
 # ---------------------------
-# Scoring  
+# Scoring (🔥 learned weights applied)
 # ---------------------------
 def score_doc(doc, user_ings: List[str], style_hint: str) -> Tuple[float, Dict]:
     md = doc.metadata or {}
@@ -177,6 +177,9 @@ Beginner friendly.
     for s, d, dbg in top:
         md = d.metadata or {}
         raw_title = md.get("menu", "") or md.get("title", "") or "Unknown"
+        
+        # ✅ 추가: 레시피일련번호 추출 (벡터 DB는 "id"로 저장)
+        recipe_id = md.get("id", "")
 
         display_title = make_witty_title(raw_title, user_story, language)
 
@@ -203,19 +206,36 @@ Beginner friendly.
             "spice": 3,
             "meme": meme,
             "debug": dbg,
+            "recipe_id": recipe_id  # ✅ 추가: 레시피ID 전달
         })
 
     return menus
 
 # ---------------------------
-# Recipe generation
+# Recipe generation (✅ 한국어 난이도 추가)
 # ---------------------------
-def recipe_stream(user_story: str, ingredients: str, picked_menu_title: str):
+def recipe_stream(user_story: str, ingredients: str, picked_menu_title: str, 
+                  korean_level: str = "Normal", selected_recipe_id: str = ""):
     language = detect_language(user_story)
 
     query = f"요리명: {picked_menu_title}\nIngredients: {ingredients}\n"
     docs = retriever.invoke(query)
     context = "\n\n".join([d.page_content for d in docs[:3]])
+    
+    # ✅ 수정: 선택한 ID 우선 사용, 없으면 검색 결과 사용
+    recipe_id = selected_recipe_id if selected_recipe_id else ""
+    if not recipe_id and docs:
+        recipe_id = docs[0].metadata.get("id", "")
+
+    # ✅ 추가: 한국어 난이도 설정
+    korean_instruction = ""
+    if language == "Korean":
+        if korean_level == "Easy":
+            korean_instruction = "\n- Use VERY simple Korean words (초등학생 수준)\n- Avoid difficult vocabulary\n- Explain every Korean cooking term"
+        elif korean_level == "Normal":
+            korean_instruction = "\n- Use everyday Korean (일상 대화 수준)\n- Briefly explain uncommon terms"
+        elif korean_level == "Advanced":
+            korean_instruction = "\n- Use natural Korean including cooking terms\n- No need to explain common cooking vocabulary"
 
     prompt = f"""
 {PERSONA_FOREIGN_BEGINNER}
@@ -235,12 +255,19 @@ Output format (STRICT):
 5) 2 YouTube Shorts search keywords (TEXT ONLY, no links)
 
 Rules:
-- Answer ONLY in {language}
+- Answer ONLY in {language}{korean_instruction}
 - Simple words only
 - No long paragraphs
 - If Korean ingredient appears, explain briefly
 """
-    return llm_chat_stream(prompt)
+    
+    # ✅ 추가: 레시피 URL을 마지막에 추가
+    for chunk in llm_chat_stream(prompt):
+        yield chunk
+    
+    # ✅ 추가: 레시피 바로가기 링크
+    if recipe_id:
+        yield f"\n\n---\n\n📖 **상세 레시피 보기**: [만개의레시피 바로가기](https://www.10000recipe.com/recipe/{recipe_id})"
 
 # ---------------------------
 # Empathy message
@@ -265,4 +292,6 @@ User situation:
     try:
         return llm_chat(prompt).strip()
     except Exception:
-        return "That sounds like a long day. Let’s fix it with food. What ingredients do you have?"
+        return "That sounds like a long day. Let's fix it with food. What ingredients do you have?"
+    
+    
