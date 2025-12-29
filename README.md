@@ -1,20 +1,5 @@
-User Input (Emotion, Ingredients, Style)
-        ↓
-Text Embedding (SentenceTransformer)
-        ↓
-Vector DB Search (Chroma)
-        ↓
-Candidate Retrieval (Top-30)
-        ↓
-Ingredient Hard Filter (Refrigerator Constraint)
-        ↓
-Priority Ranking Engine (Weighted Scoring)
-        ↓
-Top-5 Menu Selection
-        ↓
-LLM Generation (Recipe Instructions + Empathy Response)
-        ↓
-Real-Time Streaming Output (Streamlit UI)
+<img width="739" height="680" alt="image" src="https://github.com/user-attachments/assets/817e0d80-420e-4e25-8fec-e09aa94ca0be" />
+
 -------------------------------------------------------------------------
 1. 사용자 입력
 감정, 보유 재료, 선호 스타일 입력
