@@ -1,0 +1,44 @@
+User Input (Emotion, Ingredients, Style)
+        ↓
+Text Embedding (SentenceTransformer)
+        ↓
+Vector DB Search (Chroma)
+        ↓
+Candidate Retrieval (Top-30)
+        ↓
+Ingredient Hard Filter (Refrigerator Constraint)
+        ↓
+Priority Ranking Engine (Weighted Scoring)
+        ↓
+Top-5 Menu Selection
+        ↓
+LLM Generation (Recipe Instructions + Empathy Response)
+        ↓
+Real-Time Streaming Output (Streamlit UI)
+-------------------------------------------------------------------------
+1. 사용자 입력
+감정, 보유 재료, 선호 스타일 입력
+
+2. 텍스트 임베딩
+SentenceTransformer로 문서/쿼리 벡터화
+
+3. 벡터 DB 검색
+Chroma에서 의미 기반 검색 수행
+
+4. 후보군 추출
+상위 30개 레시피 후보 확보
+
+5. 재료 하드 필터
+보유 재료가 포함된 레시피만 유지
+
+6. 우선순위 랭킹
+재료·난이도·인기도·스타일·조리시간 기반 점수화
+
+7. Top-5 메뉴 선정
+최종 추천 메뉴 5개 선택
+
+8. LLM 응답 생성
+레시피 설명 + 공감 메시지 생성
+
+9. 실시간 스트리밍 출력
+Streamlit UI에 토큰 단위 응답 표시
